@@ -34,9 +34,9 @@ const webpackConfig = merge(baseWebpackConfig, {
   },
   plugins: [
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
-    new webpack.DefinePlugin({
-      'process.env': env
-    }),
+    // new webpack.DefinePlugin({
+    //   'process.env': env
+    // }),
     // new UglifyJsPlugin({
     //   uglifyOptions: {
     //     compress: {
@@ -86,8 +86,8 @@ const webpackConfig = merge(baseWebpackConfig, {
     }),
     // keep module.id stable when vendor modules does not change
     new webpack.HashedModuleIdsPlugin(),
-    // enable scope hoisting
-    new webpack.optimize.ModuleConcatenationPlugin(),
+    // enable scope hoisting 默认开启了这个
+    // new webpack.optimize.ModuleConcatenationPlugin(),
     // split vendor js into its own file
     // new webpack.optimize.CommonsChunkPlugin({
     //   name: 'vendor',
