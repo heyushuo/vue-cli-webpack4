@@ -5,6 +5,9 @@ const config = require('../config')
 //新增 解决vue-loader报错
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 const vueLoaderConfig = require('./vue-loader.conf')
+
+const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
+const smp = new SpeedMeasurePlugin();
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
@@ -20,7 +23,7 @@ const createLintingRule = () => ({
   }
 })
 
-module.exports = {
+module.exports =smp.wrap({
   context: path.resolve(__dirname, '../'),
   entry: {
     app: './src/main.js'
@@ -48,7 +51,7 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        loader: 'babel-loader',
+        loader: 'babel-loader?cacheDirectory=true',
         include: [resolve('src'), resolve('test'), resolve('node_modules/webpack-dev-server/client')]
       },
       {
@@ -90,4 +93,4 @@ module.exports = {
     tls: 'empty',
     child_process: 'empty'
   }
-}
+}) 
