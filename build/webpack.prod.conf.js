@@ -12,10 +12,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 // const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
-const env = process.env.NODE_ENV === 'testing' ?
-  require('../config/test.env') :
-  require('../config/prod.env')
-
+const env = process.env.NODE_ENV === 'testing' ? require('../config/test.env') : require('../config/prod.env')
 const webpackConfig = merge(baseWebpackConfig, {
   //新增
   mode: 'production',
@@ -70,8 +67,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     // you can customize output by editing /index.html
     // see https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
-      filename: process.env.NODE_ENV === 'testing' ?
-        'index.html' : config.build.index,
+      filename: process.env.NODE_ENV === 'testing' ? 'index.html' : config.build.index,
       template: 'index.html',
       inject: true,
       minify: {
@@ -118,8 +114,25 @@ const webpackConfig = merge(baseWebpackConfig, {
     //   minChunks: 3
     // }),
     // copy custom static assets
-    new CopyWebpackPlugin([
-    {
+    //为每一个chunk添加名字避免id递增每次以前打包的都变了失去了缓存
+    //https://segmentfault.com/a/1190000015919928
+    new webpack.NamedChunksPlugin(chunk => {
+      if (chunk.name) {
+        return chunk.name
+      }
+      const modules = Array.from(chunk.modulesIterable)
+      if (modules.length > 1) {
+        const hash = require('hash-sum')
+        const joinedHash = hash(modules.map(m => m.id).join('_'))
+        let len = nameLength
+        while (seen.has(joinedHash.substr(0, len))) len++
+        seen.add(joinedHash.substr(0, len))
+        return `chunk-${joinedHash.substr(0, len)}`
+      } else {
+        return modules[0].id
+      }
+    }),
+    new CopyWebpackPlugin([{
       from: path.resolve(__dirname, '../static'),
       to: config.build.assetsSubDirectory,
       ignore: ['.*']
@@ -130,7 +143,6 @@ const webpackConfig = merge(baseWebpackConfig, {
       例如TerserWebpackPlugin插件，性能比UglifyJSPlugin好
       默认引入生产模式为true,所以不用操作，可以手动开启和调节minimizer选项*/
     // minimize: false
-
     // 对于动态导入模块，默认使用 webpack v4+ 提供的全新的通用分块策略(common chunk strategy)。
     // 请在 SplitChunksPlugin 页面中查看配置其行为的可用选项。
     splitChunks: {
@@ -154,28 +166,18 @@ const webpackConfig = merge(baseWebpackConfig, {
     // ]
   },
 })
-
 if (config.build.productionGzip) {
   const CompressionWebpackPlugin = require('compression-webpack-plugin')
-
-  webpackConfig.plugins.push(
-    new CompressionWebpackPlugin({
-      asset: '[path].gz[query]',
-      algorithm: 'gzip',
-      test: new RegExp(
-        '\\.(' +
-        config.build.productionGzipExtensions.join('|') +
-        ')$'
-      ),
-      threshold: 10240,
-      minRatio: 0.8
-    })
-  )
+  webpackConfig.plugins.push(new CompressionWebpackPlugin({
+    asset: '[path].gz[query]',
+    algorithm: 'gzip',
+    test: new RegExp('\\.(' + config.build.productionGzipExtensions.join('|') + ')$'),
+    threshold: 10240,
+    minRatio: 0.8
+  }))
 }
-
 if (config.build.bundleAnalyzerReport) {
   const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
   webpackConfig.plugins.push(new BundleAnalyzerPlugin())
 }
-
 module.exports = webpackConfig
