@@ -5,6 +5,8 @@
 </template>
 
 <script>
+import Toast from '@/components/toast/index'
+import Announce from '@/components/announce/index'
   export default {
     name: 'HelloWorld',
     created() {},

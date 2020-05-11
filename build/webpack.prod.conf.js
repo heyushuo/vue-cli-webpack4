@@ -13,6 +13,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 // const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const env = process.env.NODE_ENV === 'testing' ? require('../config/test.env') : require('../config/prod.env')
+console.log(path.resolve(__dirname,'../src/components'));
+
 const webpackConfig = merge(baseWebpackConfig, {
   //新增
   mode: 'production',
@@ -147,6 +149,15 @@ const webpackConfig = merge(baseWebpackConfig, {
     // 请在 SplitChunksPlugin 页面中查看配置其行为的可用选项。
     splitChunks: {
       chunks: 'all',
+      cacheGroups:{
+        'base-component': {
+          name: 'base-component',
+          test: path.resolve(__dirname,'../src/components'), // can customize your rules
+          // minChunks: 0, // 最小共用次数
+          enforce: true //强制分包 对一些全局的公用组件可以进行强制分包
+          // reuseExistingChunk: true,
+        }
+      }
     },
     runtimeChunk: 'single',
     // minimizer: [
