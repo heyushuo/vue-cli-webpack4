@@ -150,13 +150,20 @@ const webpackConfig = merge(baseWebpackConfig, {
     splitChunks: {
       chunks: 'all',
       cacheGroups:{
-        'base-component': {
-          name: 'base-component',
-          test: path.resolve(__dirname,'../src/components'), // can customize your rules
-          // minChunks: 0, // 最小共用次数
-          enforce: true //强制分包 对一些全局的公用组件可以进行强制分包
-          // reuseExistingChunk: true,
-        }
+        //选择性使用
+        // 'base-component': {
+        //   name: 'base-component',
+        //   test: path.resolve(__dirname,'../src/components'), // can customize your rules
+        //   enforce: true //强制分包 对一些全局的公用组件可以进行强制分包
+        // },
+        //也可以通过minChunks,同时被三个chunk引用,才会单独打包
+        // commons: {
+        //   name: 'chunk-commons',
+        //   test:  path.resolve(__dirname,'../src/components'), // can customize your rules
+        //   minChunks: 3, //  minimum common number
+        //   priority: 5,
+        //   reuseExistingChunk: true
+        // }
       }
     },
     runtimeChunk: 'single',

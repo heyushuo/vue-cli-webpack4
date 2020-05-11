@@ -5,8 +5,6 @@
 </template>
 
 <script>
-import Toast from '@/components/toast/index'
-import Announce from '@/components/announce/index'
   export default {
     name: 'HelloWorld',
     created() {},
@@ -20,7 +18,8 @@ import Announce from '@/components/announce/index'
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
-@import url(./index.less);
+  @import url(./index.less);
+
   h1,
   h2 {
     font-weight: normal;
